@@ -96,6 +96,25 @@ server.post('/api/zoos', (req, res) => {
     })
 });
 
+// bear
+server.post('/api/bears', (req, res) => {
+  db('bears')
+    .insert(req.body)
+    .then(bear => {
+      const [id] = bear;
+
+      db('bears')
+        .where({ id })
+        .first()
+        .then(bear => {
+          res.status(200).json(bear)
+        })
+    })
+    .catch(error => {
+      res.status(500).json(error)
+    })
+});
+
 
 server.delete('/api/zoos/:id', (req, res) => {
   db('zoos')
@@ -113,6 +132,22 @@ server.delete('/api/zoos/:id', (req, res) => {
     })
 });
 
+// bears
+server.delete('/api/bears/:id', (req, res) => {
+  db('bears')
+    .where({ id: req.params.id })
+    .del()
+    .then(count => {
+      if(count > 0) {
+        res.status(204).end();
+      } else {
+        res.status(404).json({ message: 'We can hardly BEAR to tell you the news...we can\'t find the id you\'re looking for' }); 
+      }
+    })
+    .catch(error => {
+      res.status(500).json(error);
+    })
+});
 
 
 server.put('/api/zoos/:id', (req, res) => {
@@ -136,6 +171,27 @@ server.put('/api/zoos/:id', (req, res) => {
     }) 
 });
 
+// bears
+server.put('/api/bears/:id', (req, res) => {
+  db('bears')
+    .where({ id: req.params.id })
+    .update(req.body)
+    .then(count => {
+      if(count > 0) {
+        db('bears')
+          .where({ id: req.params.id })
+          .first()
+          .then(bear => {
+            res.status(200).json(bear)
+          })
+        } else {
+          res.status(404).json({ message: 'We can hardly BEAR to tell you the news...we can\'t find the id you\'re looking for' })
+      }
+    })
+    .catch(error => {
+      res.status(500).json(error)
+    }) 
+});
 
 
 const port = 3300;
