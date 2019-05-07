@@ -93,10 +93,20 @@ server.put('/api/zoos/:id', (req, res) => {
     .update(req.body)
     .then(count => {
       if(count > 0) {
-        
+        db('zoos')
+          .where({ id: req.params.id })
+          .first()
+          .then(zoo => {
+            res.status(200).json(zoo)
+          })
+        } else {
+          res.status(404).json({ message: 'Zoo id not found...and we aren\'t LION!' })
       }
     })
-})
+    .catch(error => {
+      res.status(500).json(error)
+    }) 
+});
 
 
 
