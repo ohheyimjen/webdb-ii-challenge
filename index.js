@@ -32,6 +32,17 @@ server.get('/api/zoos', (req, res) => {
     })
 });
 
+// bears
+server.get('/api/bears', (req, res) => {
+  db('bears')
+    .then(bear => {
+      res.status(200).json(bear)
+    })
+    .catch(error => {
+      res.status(500).json(error)
+    })
+});
+
 
 server.get('/api/zoos/:id', (req, res) => {
   db('zoos')
@@ -48,6 +59,23 @@ server.get('/api/zoos/:id', (req, res) => {
       res.status(500).json(error)
     })
   });
+
+  // bears
+  server.get('/api/bears/:id', (req, res) => {
+    db('bears')
+      .where({ id: req.params.id })
+      .first()
+      .then(bear => {
+        if(bear) {
+          res.status(200).json(bear);
+        } else {
+          res.status(404).json({ message: 'We can hardly BEAR to tell you the news...we can\'t find the id you\'re looking for' });
+        }
+      })
+      .catch(error => {
+        res.status(500).json(error)
+      })
+    });
 
 
 server.post('/api/zoos', (req, res) => {
